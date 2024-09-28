@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Positioning, Segmentation, and Targeting</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is market segmentation?", choices: ["Targeting all consumers with the same product", "Dividing a market into distinct groups of buyers who have different needs, characteristics, or behaviors", "Creating different products for each geographic region", "Pricing products differently in each market"], correct: 1 },
+        { question: "Which of the following is an example of demographic segmentation?", choices: ["A car company offering different models for high-income and low-income buyers", "A clothing brand targeting consumers based on their lifestyle choices", "A tech company segmenting the market by technological expertise", "A fast-food chain offering different menus based on location"], correct: 0 },
+        { question: "What is geographic segmentation?", choices: ["Dividing the market based on age and gender", "Offering the same product in all regions", "Dividing the market into geographical units such as nations, regions, or cities", "Targeting consumers based on lifestyle and personality traits"], correct: 2 },
+        { question: "Which strategy involves targeting several market segments with different offers for each?", choices: ["Undifferentiated marketing", "Differentiated (segmented) marketing", "Concentrated (niche) marketing", "Individual marketing"], correct: 1 },
+        { question: "What is a characteristic of concentrated (niche) marketing?", choices: ["Targeting the entire market with one product", "Targeting multiple segments with different products", "Focusing on a large share of one or a few smaller segments", "Ignoring market segment differences"], correct: 2 },
+        { question: "What does market positioning refer to?", choices: ["The process of selecting which segments to target", "Arranging for a product to occupy a clear, distinctive, and desirable place relative to competing products in the minds of consumers", "Dividing the market into geographical regions", "Conducting research to determine consumer preferences"], correct: 1 },
+        { question: "Which of the following is not an example of psychographic segmentation?", choices: ["Dividing consumers based on their social class", "Targeting consumers based on their personality traits", "Grouping consumers based on their lifestyle choices", "Targeting consumers based on their income level"], correct: 3 },
+        { question: "What is an example of behavioral segmentation?", choices: ["Grouping consumers based on their response to product features, such as heavy users vs. light users", "Segmenting based on consumers' occupation", "Dividing the market based on family size", "Offering different products based on climate"], correct: 0 },
+        { question: "What is individual (micromarketing)?", choices: ["Offering one product to the entire market", "Tailoring products and marketing programs to the needs of specific individuals or local customer segments", "Grouping consumers by demographic factors", "Targeting large market segments with mass marketing strategies"], correct: 1 },
+        { question: "Which of the following is a key benefit of differentiated marketing?", choices: ["Lower marketing expenses", "Increased potential for sales growth by targeting multiple segments", "Less competition", "Simplified product development process"], correct: 1 },
+        { question: "What is a positioning map used for?", choices: ["To show customer behavior trends over time", "To visualize consumer perceptions of a brand versus competing products on important buying dimensions", "To track the sales performance of a product", "To identify geographic locations for market expansion"], correct: 1 },
+        { question: "Which of the following is a good example of competitive advantage?", choices: ["Offering a product at the lowest possible price", "Providing a unique set of benefits that justify a higher price compared to competitors", "Copying a competitor’s marketing strategy", "Reducing the quality of the product to increase profits"], correct: 1 },
+        { question: "What is undifferentiated (mass) marketing?", choices: ["Targeting a small niche segment", "Ignoring market segment differences and targeting the whole market with one offer", "Offering custom-made products for individual consumers", "Targeting different geographic regions with different products"], correct: 1 },
+        { question: "What does the 4P’s of the marketing mix consist of?", choices: ["Product, Price, Promotion, and Place", "Positioning, Production, People, and Pricing", "Product, Packaging, Promotion, and Planning", "Place, People, Positioning, and Profit"], correct: 0 },
+        { question: "Which of the following is an example of operational marketing?", choices: ["Deciding to enter a new market segment", "Developing a new product to meet consumer demand", "Launching a promotional campaign for an existing product", "Creating a positioning strategy for a new brand"], correct: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
